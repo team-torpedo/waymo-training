@@ -1,0 +1,54 @@
+# Lane segmentation (TensorFlow / Keras). Binary mask: lane pixel vs. background.
+#
+# NOTE: the Waymo perception dataset has no lane *polylines* for camera images.
+# Lane masks are derived from the camera panoptic segmentation labels
+# (`camera_segmentation`) by merging the semantic classes listed below.
+# Only a subset of frames carries these labels.
+
+lane:
+  run_name: lane_seg
+
+  # Waymo CameraSegmentation semantic ids merged into the "lane" mask.
+  # 21 = LANE_MARKER, 22 = ROAD_MARKER, 20 = ROAD (add it for drivable area).
+  semantic_classes: [21]
+
+  data:
+    image_size: [320, 512]   # [height, width]; must be divisible by 32
+    batch_size: 16
+    shuffle_buffer: 2000
+    cache: false
+    augment:
+      hflip: true
+      brightness: 0.2        # max delta as a fraction of 255; 0 disables
+      contrast: [0.8, 1.2]   # null disables
+
+  model:
+    name: mobilenet_unet     # unet | mobilenet_unet | fcn  (see docs/extending.md)
+    params:                  # forwarded to the model builder
+      pretrained: imagenet   # mobilenet_unet only: imagenet | null
+      freeze_backbone: false
+      # unet:  base_filters: 32, depth: 4, dropout: 0.1
+      # fcn:   base_filters: 32
+
+  loss:
+    name: bce_dice           # bce | dice | bce_dice | focal
+    params:
+      bce_weight: 0.5
+      dice_weight: 0.5
+
+  optimizer:
+    name: adam               # adam | adamw | sgd | rmsprop
+    lr: 0.001
+    weight_decay: 0.0
+    params: {}
+
+  scheduler:
+    name: cosine             # constant | cosine | exponential
+    params: {}
+
+  train:
+    epochs: 30
+    mixed_precision: false
+    early_stopping_patience: 8
+    monitor: val_iou
+    threshold: 0.5           # probability cut-off for the IoU/precision/recall metrics

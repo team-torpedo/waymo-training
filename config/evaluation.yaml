@@ -1,0 +1,11 @@
+# Evaluation of trained models on a held-out split.
+
+evaluation:
+  split: val                 # Waymo `test` has no public labels, so evaluate on val
+  detection:
+    weights: null            # null = latest trained run (outputs/detection/latest.json)
+    num_visualizations: 8
+  lane:
+    model_path: null         # null = latest trained run (outputs/lane/latest.json)
+    threshold: 0.5
+    num_visualizations: 8

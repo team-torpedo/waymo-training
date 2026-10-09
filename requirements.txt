@@ -1,0 +1,17 @@
+# Runtime dependencies for waymo-training.
+# Python 3.10 - 3.12 recommended (TensorFlow wheels lag behind newest Python).
+#
+# GPU on Linux: install with `scripts/setup_venv.sh --gpu`, which uses the
+# `tensorflow[and-cuda]` extra instead of plain `tensorflow`.
+
+tensorflow>=2.16        # lane segmentation (Keras 3)
+ultralytics>=8.3        # YOLO object detection (PyTorch backend)
+
+numpy
+pandas
+pyarrow                 # read Waymo v2 parquet files
+pyyaml
+opencv-python-headless
+pillow
+tqdm
+tensorboard

@@ -1,0 +1,29 @@
+# Master config: project settings, directory layout and which pipeline stages run.
+# Every *.yaml in this directory is merged (alphabetically, `local.yaml` last).
+# Values may reference each other with ${section.key} or environment variables
+# with ${env:NAME} / ${env:NAME,default}.
+# Override anything from the CLI:  python main.py --set lane.train.epochs=5
+
+project:
+  name: waymo-training
+  seed: 42
+  log_level: INFO
+
+paths:                       # relative paths resolve against the repo root
+  data_root: data
+  raw_dir: ${paths.data_root}/raw                # downloaded Waymo parquet files
+  processed_dir: ${paths.data_root}/processed
+  yolo_dir: ${paths.processed_dir}/yolo          # YOLO-format detection dataset
+  lane_dir: ${paths.processed_dir}/lane          # image / mask pairs for lane model
+  outputs_dir: outputs
+  detection_runs_dir: ${paths.outputs_dir}/detection
+  lane_runs_dir: ${paths.outputs_dir}/lane
+  eval_dir: ${paths.outputs_dir}/evaluation
+
+pipeline:
+  # Stages `python main.py` runs, in order. Available:
+  #   download, preprocess, train_detection, train_lane, evaluate
+  stages: [download, preprocess, train_detection, train_lane, evaluate]
+  tasks:                     # switch a whole task off without editing `stages`
+    detection: true
+    lane: true

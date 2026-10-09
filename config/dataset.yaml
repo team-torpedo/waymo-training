@@ -1,0 +1,28 @@
+# Dataset access, download and preprocessing.
+
+dataset:
+  reader: waymo_v2           # registry key in waymo_training.data (see docs/extending.md)
+  gcs_bucket: gs://waymo_open_dataset_v_2_0_0
+  splits:                    # our split name -> folder name inside the bucket
+    train: training
+    val: validation
+  cameras: [FRONT, FRONT_LEFT, FRONT_RIGHT, SIDE_LEFT, SIDE_RIGHT]
+
+  download:
+    tool: gsutil             # gsutil | gcloud  (gcloud uses `gcloud storage`)
+    max_segments:            # segments (~20 s drives) per split; null = everything (TBs!)
+      train: 10
+      val: 3
+    # Components fetched. `null` = derive from the enabled tasks:
+    #   detection -> camera_image, camera_box
+    #   lane      -> camera_image, camera_segmentation
+    components: null
+    parallel: true          # gsutil -m
+
+  preprocess:
+    jpeg_quality: 95         # only used if an image has to be re-encoded
+    detection:
+      require_labels: true   # skip frames that have no camera_box rows (unlabeled != empty)
+      min_box_px: 2          # drop boxes smaller than this (pixels) in either side
+    lane:
+      min_lane_fraction: 0.0 # drop masks with a smaller fraction of lane pixels (0 = keep all)

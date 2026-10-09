@@ -1,0 +1,38 @@
+# Object detection (YOLO via Ultralytics).
+
+detection:
+  backend: ultralytics       # registry key in waymo_training.detection
+  run_name: yolo_waymo
+
+  # Waymo camera_box type id -> class name. Order defines the YOLO class index.
+  # Remove a line to ignore that class (e.g. drop `3: sign`).
+  classes:
+    1: vehicle
+    2: pedestrian
+    3: sign
+    4: cyclist
+
+  model:
+    # Any Ultralytics model: yolo11n.pt / yolo11s.pt / yolov8m.pt (pretrained, auto-downloaded)
+    # or a .yaml architecture (e.g. yolo11n.yaml) to train from scratch.
+    weights: yolo11n.pt
+
+  train:
+    epochs: 50
+    imgsz: 640
+    batch: 16
+    device: null             # null = auto, 0, "0,1", or "cpu"
+    workers: 8
+    patience: 20
+    optimizer: auto
+    lr0: 0.01
+    cos_lr: false
+    amp: true
+    cache: false
+    resume: false
+    extra: {}                # forwarded verbatim to Ultralytics `train()` (e.g. mosaic: 0.5)
+
+  val:
+    imgsz: ${detection.train.imgsz}
+    conf: 0.001
+    iou: 0.6

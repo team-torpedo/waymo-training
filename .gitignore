@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environment
+venv/
+.venv/
+
+# Data & outputs (large — never commit)
+data/
+outputs/
+runs/
+*.parquet
+*.tfrecord
+*.pt
+*.keras
+*.h5
+*.onnx
+
+# Local config overrides
+config/local.yaml
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+*.log
+tensorboard/
