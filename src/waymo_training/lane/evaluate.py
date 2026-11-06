@@ -32,14 +32,38 @@ def evaluate_lane(cfg: Config, model_path: str | Path | None = None) -> dict:
     vis_dir = ensure_dir(out_dir / "visualizations")
     n_vis = int(ev.get("num_visualizations", 0))
 
-    model = tf.keras.models.load_model(str(model_path), compile=False)
+    gpus = tf.config.list_physical_devices("GPU")
+    if gpus:
+        try:
+            for gpu in gpus:
+                tf.config.experimental.set_memory_growth(gpu, True)
+        except Exception:
+            pass
+
+    use_cpu = False
+    try:
+        model = tf.keras.models.load_model(str(model_path), compile=False)
+    except Exception:
+        with tf.device("/CPU:0"):
+            model = tf.keras.models.load_model(str(model_path), compile=False)
+        use_cpu = True
+
     ds, n_total = build_dataset(cfg, split, training=False)
     stride = max(1, n_total // n_vis) if n_vis > 0 else 0
 
     tp = fp = fn = tn = 0
     seen = saved = 0
     for x, y in ds:
-        pred = model(x, training=False).numpy()[..., 0] > thr
+        try:
+            if use_cpu:
+                with tf.device("/CPU:0"):
+                    pred = model(x, training=False).numpy()[..., 0] > thr
+            else:
+                pred = model(x, training=False).numpy()[..., 0] > thr
+        except (tf.errors.ResourceExhaustedError, Exception):
+            use_cpu = True
+            with tf.device("/CPU:0"):
+                pred = model(x, training=False).numpy()[..., 0] > thr
         gt = y.numpy()[..., 0] > 0.5
         tp += int(np.logical_and(pred, gt).sum())
         fp += int(np.logical_and(pred, ~gt).sum())

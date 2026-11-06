@@ -11,11 +11,12 @@ dist/
 # Virtual environment
 venv/
 .venv/
+myenv/
 
 # Data & outputs (large — never commit)
-data/
-outputs/
-runs/
+/data/
+/outputs/
+/runs/
 *.parquet
 *.tfrecord
 *.pt

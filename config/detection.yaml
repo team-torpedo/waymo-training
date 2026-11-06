@@ -22,7 +22,7 @@ detection:
     imgsz: 640
     batch: 16
     device: null             # null = auto, 0, "0,1", or "cpu"
-    workers: 8
+    workers: 2               # keep low (2) on laptops to prevent system RAM OOM crash
     patience: 20
     optimizer: auto
     lr0: 0.01

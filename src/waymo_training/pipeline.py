@@ -51,6 +51,16 @@ def stage_evaluate(cfg: Config) -> dict:
         weights = cfg.get("evaluation.detection.weights")
         results["detection"] = det.evaluate(weights)
         det.visualize(weights)
+        det = None
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                torch.cuda.ipc_collect()
+        except ImportError:
+            pass
+        import gc
+        gc.collect()
     if tasks["lane"]:
         from .lane.evaluate import evaluate_lane
 

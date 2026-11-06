@@ -55,6 +55,17 @@ def train_lane(cfg: Config) -> Path:
     log.info("Lane data: %d train / %d val images", n_train, n_val)
 
     model = build_model(cfg)
+    init_weights = cfg.get("lane.model.weights") or cfg.get("lane.train.weights")
+    if init_weights:
+        p = Path(str(init_weights))
+        if not p.is_absolute():
+            p = cfg.root / p
+        if p.exists():
+            log.info("Loading pretrained lane weights from %s", p)
+            loaded = tf.keras.models.load_model(str(p), compile=False)
+            model.set_weights(loaded.get_weights())
+        else:
+            log.warning("Pretrained lane weights %s not found; training from scratch", p)
     steps = math.ceil(n_train / int(cfg.lane.data.batch_size))
     total_steps = steps * int(t.epochs)
 
