@@ -44,6 +44,17 @@ def latest_model_path(cfg: Config) -> Path:
 
 
 def train_lane(cfg: Config) -> Path:
+    gpus = tf.config.list_physical_devices("GPU")
+    if gpus:
+        for gpu in gpus:
+            try:
+                tf.config.experimental.set_memory_growth(gpu, True)
+            except RuntimeError as err:
+                log.warning("Could not set memory growth on %s: %s", gpu, err)
+        log.info("Using GPU: %s", [g.name for g in gpus])
+    else:
+        log.warning("No GPU detected by TensorFlow; running on CPU")
+
     t = cfg.lane.train
     tf.keras.utils.set_random_seed(int(cfg.project.seed))
     if t.mixed_precision:
@@ -85,7 +96,12 @@ def train_lane(cfg: Config) -> Path:
     )
     loss_params = cfg.lane.loss.get("params")
     loss = LOSSES.build(cfg.lane.loss.name, **(loss_params.to_dict() if loss_params else {}))
-    model.compile(optimizer=optimizer, loss=loss, metrics=make_metrics(float(t.threshold)))
+    model.compile(
+        optimizer=optimizer,
+        loss=loss,
+        metrics=make_metrics(float(t.threshold)),
+        jit_compile=False,
+    )
     model.summary(print_fn=log.info)
 
     runs = ensure_dir(cfg.path("paths.lane_runs_dir"))

@@ -25,7 +25,7 @@ def list_pairs(cfg: Config, split: str) -> tuple[list[str], list[str]]:
 def _make_load(h: int, w: int):
     def load(img_path, mask_path):
         img = tf.io.decode_jpeg(tf.io.read_file(img_path), channels=3)
-        img = tf.image.resize(img, (h, w), method="bilinear", antialias=True)
+        img = tf.image.resize(img, (h, w), method="bilinear", antialias=False)
         img = tf.cast(tf.clip_by_value(img, 0.0, 255.0), tf.float32)
         mask = tf.io.decode_png(tf.io.read_file(mask_path), channels=1)
         mask = tf.image.resize(mask, (h, w), method="nearest")
@@ -64,10 +64,10 @@ def build_dataset(cfg: Config, split: str, training: bool) -> tuple[tf.data.Data
     ds = tf.data.Dataset.from_tensor_slices((imgs, masks))
     if training:
         ds = ds.shuffle(min(len(imgs), int(d.shuffle_buffer)), reshuffle_each_iteration=True)
-    ds = ds.map(_make_load(h, w), num_parallel_calls=tf.data.AUTOTUNE)
+    ds = ds.map(_make_load(h, w), num_parallel_calls=tf.data.AUTOTUNE, deterministic=False)
     if d.cache:
         ds = ds.cache()
     if training and d.get("augment"):
-        ds = ds.map(_make_augment(d.augment), num_parallel_calls=tf.data.AUTOTUNE)
+        ds = ds.map(_make_augment(d.augment), num_parallel_calls=tf.data.AUTOTUNE, deterministic=False)
     ds = ds.batch(int(d.batch_size)).prefetch(tf.data.AUTOTUNE)
     return ds, len(imgs)

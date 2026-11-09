@@ -34,4 +34,5 @@ config/local.yaml
 
 # Logs
 *.log
+*.btr
 tensorboard/
