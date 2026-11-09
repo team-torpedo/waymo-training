@@ -55,21 +55,13 @@ class NumberedCanvas(canvas.Canvas):
         self.setFont("Helvetica", 8)
         self.setFillColor(colors.HexColor("#64748b"))
 
-        # Header (Pages > 1)
-        if self._pageNumber > 1:
-            self.drawString(54, letter[1] - 36, "Waymo Perception Pipeline: Model Evaluation & Comparative Matrix")
-            self.setStrokeColor(colors.HexColor("#e2e8f0"))
-            self.setLineWidth(0.5)
-            self.line(54, letter[1] - 42, letter[0] - 54, letter[1] - 42)
-
-        # Footer (All pages)
+        # Footer (All pages) - clean page counter without confidential banner
         self.setStrokeColor(colors.HexColor("#e2e8f0"))
         self.setLineWidth(0.5)
         self.line(54, 46, letter[0] - 54, 46)
 
         footer_text = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(letter[0] - 54, 32, footer_text)
-        self.drawString(54, 32, "Confidential - Autonomous Driving Research Team - Generated via waymo-training")
         self.restoreState()
 
 
@@ -175,7 +167,7 @@ def build_pdf_report(output_pdf_path: Path):
     story = []
 
     # Title Banner
-    story.append(Paragraph("Waymo Perception Pipeline: Model Evaluation & Comparative Matrix", title_style))
+    story.append(Paragraph("Autonomous Perception Pipeline: Performance & Comparative Analysis", title_style))
     story.append(Spacer(1, 4))
     story.append(Paragraph(
         "Dual-Model Comparative Analysis: Ultralytics YOLO11n Obstacle Detection & MobileNetV2-UNet Lane Segmentation<br/>"
