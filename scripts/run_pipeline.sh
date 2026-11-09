@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Run the full pipeline inside the venv. Extra args go to main.py.
-#   bash scripts/run_pipeline.sh --skip download
+# Run the full perception pipeline inside the detected environment.
+# Usage:
+#   bash scripts/run_pipeline.sh [OPTIONS]
 set -euo pipefail
 cd "$(dirname "$0")/.."
-exec venv/bin/python main.py "$@"
+exec ./run_project.sh "$@"
