@@ -102,7 +102,7 @@ def build_comparative_report(det_res: dict | None, lane_res: dict | None) -> str
         "Both Obstacle Detection (YOLO11n) and Lane Line Segmentation (MobileNetV2-UNet) were tested "
         "on the held-out validation split. The models demonstrate substantial accuracy gains and boundary "
         "recovery compared to the baseline, maintaining an aggregate throughput of >140 FPS with a total "
-        "disk weight footprint of just 26.2 MB."
+        "disk checkpoint footprint of 71.1 MB (YOLO11n: 5.5 MB, MobileNetV2-UNet: 65.6 MB)."
     )
     lines.append("")
 
@@ -176,7 +176,7 @@ def build_comparative_report(det_res: dict | None, lane_res: dict | None) -> str
     lines.append("| **Preprocess Time** | 0.3 ms | 0.8 ms | 1.1 ms | Low overhead |")
     lines.append("| **Postprocess Time** | 0.5 ms (NMS) | 0.4 ms (Thresholding) | 0.9 ms | Low overhead |")
     lines.append("| **VRAM Working Set** | 2.1 GB / 8.0 GB (26%) | 1.8 GB / 8.0 GB (22%) | 3.9 GB / 8.0 GB (49% peak) | Jetson Orin / RTX compatible |")
-    lines.append("| **Model Weights Footprint** | **5.5 MB** (`best.pt`) | **20.7 MB** (`best.keras`) | **26.2 MB** total | Micro-storage compatible |")
+    lines.append("| **Model Weights Footprint** | **5.5 MB** (`best.pt`) | **65.6 MB** (`best.keras`) | **71.1 MB** total | Micro-storage compatible |")
     lines.append("| **Parameter Count** | 2.6 Million parameters | 5.4 Million parameters | 8.0 Million parameters | Lightweight Edge footprint |")
     lines.append("| **Compute Complexity** | 6.4 GFLOPs | 4.8 GFLOPs | 11.2 GFLOPs | Low thermal dissipation |")
     lines.append("")
@@ -215,7 +215,7 @@ def build_comparative_report(det_res: dict | None, lane_res: dict | None) -> str
     lines.append("| Task | Checkpoint Path | File Size | Format | Deployment Status |")
     lines.append("| :--- | :--- | :---: | :---: | :---: |")
     lines.append("| **Obstacle Detection** | `outputs/detection/yolo_waymo-20261107-011635/weights/best.pt` | 5.5 MB | PyTorch (Ultralytics) | Verified Production Ready |")
-    lines.append("| **Lane Segmentation** | `outputs/lane/lane_seg-20261109-145931/best.keras` | 20.7 MB | Keras v3 SavedModel | Verified Production Ready |")
+    lines.append("| **Lane Segmentation** | `outputs/lane/lane_seg-20261109-145931/best.keras` | 65.6 MB | Keras v3 SavedModel | Verified Production Ready |")
     lines.append("")
 
     return "\n".join(lines)

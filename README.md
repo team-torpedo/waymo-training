@@ -25,7 +25,7 @@ Both models were benchmarked on the Waymo validation dataset on an **NVIDIA GeFo
 | **Pedestrian mAP@0.50:0.95** | 9.90% | **16.60%** | +6.70% | +67.7% | Robust |
 | **Cyclist mAP@0.50:0.95** | 0.003% *(failed)* | **13.40%** | +13.40% | **+446,500%** | Fully Recovered |
 
-### 2. Lane Line Segmentation (MobileNetV2-UNet — 20.7 MB)
+### 2. Lane Line Segmentation (MobileNetV2-UNet — 65.6 MB)
 *Binary semantic segmentation evaluated on 495 Waymo front camera frames (threshold = 0.50).*
 
 | Evaluation Metric | Initial Baseline | High-LR Collapse Run | Current Final Run (LR=1e-4) | Relative Improvement | Status |
@@ -45,7 +45,7 @@ Both models were benchmarked on the Waymo validation dataset on an **NVIDIA GeFo
 | **Preprocess Latency** | 0.3 ms | 0.8 ms | 1.1 ms |
 | **Postprocess Latency** | 0.5 ms (NMS) | 0.4 ms (Thresholding) | 0.9 ms |
 | **GPU VRAM Utilization** | 2.1 GB / 8.0 GB (26%) | 1.8 GB / 8.0 GB (22%) | 3.9 GB / 8.0 GB (49% peak) |
-| **Model Weights Footprint** | **5.5 MB** (`best.pt`) | **20.7 MB** (`best.keras`) | **26.2 MB** total disk space |
+| **Model Weights Footprint** | **5.5 MB** (`best.pt`) | **65.6 MB** (`best.keras`) | **71.1 MB** total disk space |
 | **Active Parameter Count** | 2.6 Million | 5.4 Million | 8.0 Million |
 | **Compute Complexity** | 6.4 GFLOPs | 4.8 GFLOPs | 11.2 GFLOPs |
 
@@ -254,7 +254,7 @@ waymo-training/
 ## Production Weight Checkpoints
 
 - **Obstacle Detection:** `outputs/detection/yolo_waymo-20261107-011635/weights/best.pt` (5.5 MB)
-- **Lane Segmentation:** `outputs/lane/lane_seg-20261109-145931/best.keras` (20.7 MB)
+- **Lane Segmentation:** `outputs/lane/lane_seg-20261109-145931/best.keras` (65.6 MB)
 
 ---
 

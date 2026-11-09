@@ -184,7 +184,7 @@ def build_pdf_report(output_pdf_path: Path):
         "hyperparameter tuning. Obstacle detection (YOLO11n) achieved a <b>+105.4% relative gain in mAP50-95</b> (0.096 to 0.197) "
         "with real-time throughput of <b>625 FPS (1.6 ms latency)</b>. Lane segmentation (MobileNetV2-UNet) improved validation "
         "IoU from <b>17.5% to 25.2% (+44.5% relative gain)</b> and precision from <b>21.1% to 35.2% (+67.1% relative gain)</b>, "
-        "running at <b>185 FPS (5.4 ms latency)</b> with a combined weight footprint of only <b>26.2 MB</b>."
+        "running at <b>185 FPS (5.4 ms latency)</b> with a combined checkpoint footprint of <b>71.1 MB</b> (YOLO11n: 5.5 MB, MobileNetV2-UNet: 65.6 MB)."
     )
     summary_table = Table([[Paragraph(summary_text, callout_style)]], colWidths=[516])
     summary_table.setStyle(TableStyle([
@@ -378,7 +378,7 @@ def build_pdf_report(output_pdf_path: Path):
             Paragraph("MobileNetV2 Lane UNet", th_style),
             Paragraph("Combined Pipeline", th_style),
         ],
-        [Paragraph("Saved Weights Format & File", td_bold), Paragraph("PyTorch best.pt (5.5 MB)", td_style), Paragraph("Keras best.keras (20.7 MB)", td_style), Paragraph("26.2 MB total disk footprint", td_green)],
+        [Paragraph("Saved Weights Format & File", td_bold), Paragraph("PyTorch best.pt (5.5 MB)", td_style), Paragraph("Keras best.keras (65.6 MB)", td_style), Paragraph("71.1 MB total checkpoint footprint", td_green)],
         [Paragraph("Total Parameters / GFLOPs", td_bold), Paragraph("2.6M params / 6.4 GFLOPs", td_style), Paragraph("5.4M params / ~4.8 GFLOPs", td_style), Paragraph("8.0M params / ~11.2 GFLOPs", td_bold)],
         [Paragraph("Training Duration", td_bold), Paragraph("7,804.4s (~2h 10m, 50 epochs)", td_style), Paragraph("2,406.4s (~40m, 26 epochs)", td_style), Paragraph("2h 50m full training run", td_style)],
         [Paragraph("GPU Memory (VRAM Allocated)", td_bold), Paragraph("~4.8 GB peak", td_style), Paragraph("~5.2 GB peak", td_style), Paragraph("Fits comfortably inside 8GB", td_green)],
@@ -476,7 +476,7 @@ def build_pdf_report(output_pdf_path: Path):
     ckpt_data = [
         [Paragraph("Model", th_style), Paragraph("Task", th_style), Paragraph("File Path", th_style), Paragraph("Size", th_style)],
         [Paragraph("YOLO11n", td_bold), Paragraph("3-Class BBox", td_style), Paragraph("outputs/detection/yolo_waymo-20261107-011635/weights/best.pt", td_style), Paragraph("5.5 MB", td_bold)],
-        [Paragraph("MobileNetV2-UNet", td_bold), Paragraph("Binary Lane Mask", td_style), Paragraph("outputs/lane/lane_seg-20261109-145931/best.keras", td_style), Paragraph("20.7 MB", td_bold)],
+        [Paragraph("MobileNetV2-UNet", td_bold), Paragraph("Binary Lane Mask", td_style), Paragraph("outputs/lane/lane_seg-20261109-145931/best.keras", td_style), Paragraph("65.6 MB", td_bold)],
     ]
     ckpt_table = Table(ckpt_data, colWidths=[90, 96, 260, 70])
     ckpt_table.setStyle(TableStyle([
