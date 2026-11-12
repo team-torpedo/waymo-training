@@ -75,6 +75,7 @@ chmod +x run_project.sh
 ./run_project.sh --train-det    # Train only YOLO11n obstacle detection
 ./run_project.sh --train-lane   # Train only MobileNetV2-UNet lane segmentation
 ./run_project.sh --test         # Evaluate checkpoints and print comparative matrices
+./run_project.sh --onnx         # Export trained PyTorch & Keras models to ONNX
 ./run_project.sh --report       # Compile publication-ready PDF report
 ./run_project.sh --help         # Show all available flags
 ```
@@ -251,10 +252,20 @@ waymo-training/
 
 ---
 
-## Production Weight Checkpoints
+## Production Weight Checkpoints & ONNX Models
 
-- **Obstacle Detection:** `outputs/detection/yolo_waymo-20261107-011635/weights/best.pt` (5.5 MB)
-- **Lane Segmentation:** `outputs/lane/lane_seg-20261109-145931/best.keras` (65.6 MB)
+| Task | Framework | Original Checkpoint | ONNX Model (Inference Ready) | Input Shape | Output Shape |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **Obstacle Detection (YOLO11n)** | PyTorch | `best.pt` (5.5 MB) | [`best.onnx`](outputs/detection/yolo_waymo-20261107-011635/weights/best.onnx) (10.17 MB) | `[1, 3, 640, 640]` | `[1, 8, 8400]` |
+| **Lane Segmentation (MobileNetV2)** | TensorFlow / Keras | `best.keras` (65.6 MB) | [`best.onnx`](outputs/lane/lane_seg-20261109-145931/best.onnx) (20.56 MB) | `[1, 320, 512, 3]` | `[1, 320, 512, 1]` |
+
+### Exporting to ONNX
+Run the automated exporter to convert both models and verify tensor parity:
+```bash
+python scripts/export_onnx.py
+# or via master runner:
+./run_project.sh --onnx
+```
 
 ---
 

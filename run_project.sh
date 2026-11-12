@@ -86,6 +86,7 @@ show_help() {
     echo "  --train-det        Train only YOLO11n obstacle detection"
     echo "  --train-lane       Train only MobileNetV2-UNet lane segmentation"
     echo "  --test, --eval     Run model testing on validation dataset and generate comparative matrix"
+    echo "  --onnx, --export-onnx Export trained perception models to ONNX format"
     echo "  --report           Compile PDF analysis report (outputs/reports/waymo_comparative_analysis_report.pdf)"
     echo "  --quick-test       Run quick test on small batch"
     echo "  --help, -h         Show this help message"
@@ -137,6 +138,12 @@ run_pdf_report() {
     fi
 }
 
+run_export_onnx() {
+    log_step "Exporting Trained Models to ONNX..."
+    "${PYTHON_BIN}" scripts/export_onnx.py "$@"
+    log_succ "ONNX export completed. Models saved in outputs/."
+}
+
 # ------------------------------------------------------------------------------
 # 4. Command Line Argument Dispatcher
 # ------------------------------------------------------------------------------
@@ -167,6 +174,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --report)
             MODE="report"
+            shift
+            ;;
+        --onnx|--export-onnx)
+            MODE="onnx"
             shift
             ;;
         --quick-test)
@@ -222,6 +233,10 @@ case "$MODE" in
         log_info "Compiling Analysis PDF Report..."
         run_pdf_report
         ;;
+    onnx)
+        log_info "Exporting Perception Models to ONNX..."
+        run_export_onnx
+        ;;
     quick-test)
         log_info "Running Quick Validation Verification..."
         "${PYTHON_BIN}" test_models.py
@@ -265,5 +280,11 @@ echo "  - Test Results & Tables (Markdown) : outputs/reports/model_test_and_comp
 echo "  - Test Results & Tables (Text)     : outputs/reports/model_test_and_comparative_results.txt"
 if [[ -f "outputs/reports/waymo_comparative_analysis_report.pdf" ]]; then
     echo "  - Executive Report (PDF)           : outputs/reports/waymo_comparative_analysis_report.pdf"
+fi
+if [[ -f "outputs/detection/yolo_waymo-20261107-011635/weights/best.onnx" ]]; then
+    echo "  - Obstacle Detection (ONNX)        : outputs/detection/yolo_waymo-20261107-011635/weights/best.onnx"
+fi
+if [[ -f "outputs/lane/lane_seg-20261109-145931/best.onnx" ]]; then
+    echo "  - Lane Segmentation (ONNX)         : outputs/lane/lane_seg-20261109-145931/best.onnx"
 fi
 echo ""
